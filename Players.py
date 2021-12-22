@@ -91,13 +91,13 @@ class Giocatore_IA(Giocatore):
 
     '''ora inserisco tutta una serie di metodi che consentono all'IA di procedere in maniera intelligente e adottare strategie di gioco'''
 
-    def CarteNextPlayers(self):
+    def CarteNextPlayer(self):
         #controlla quante carte ha il giocatore successivo
         next_turno = getTurno(turno, giocatori)+1
         giocatore = _giocatori[next_turno]
         return len(giocatore.getMano())
 
-    def getSpecial(self):
+    def getSpeciale(self):
         #cerca quante carte speciali (+4, +2, inverti, cambia colore) si abbiano e le memorizza in un dizionario, assieme alla posizione
         speciali = {}
         carteSpeciali = ["pesca_quattro", "pesca_due", "inverti", "stop", "cambio_colore"]
@@ -109,7 +109,7 @@ class Giocatore_IA(Giocatore):
                     speciali[special].append(index)
         return speciali
 
-    def getMultipleSpecial(self):
+    def getMultipliSpeciali(self):
         #cerca se è possibile giocare 2 carte, e se è possibile ritorna quali sono (colore, valore, index)
         #il criterio è questo: vale doppia se entrambe le carte hanno lo stesso valore e almeno una di esse ha lo stesso colore dell'ultima carta
         color = mazzo.ultimaCarta().getColore()
@@ -130,7 +130,7 @@ class Giocatore_IA(Giocatore):
         return multipleSpecial
         #adesso controllo tra quelle normali
 
-    def getMultiple(self):
+    def getMultipli(self):
         color = mazzo.ultimaCarta().getColore()
         mano = self.getMano()
         multiple = False
@@ -186,12 +186,12 @@ class Giocatore_IA(Giocatore):
             # 3. butta 2 carte
             # 4. butta la prima carta utile appartenente al colore MENO rappresentato della mano
             # 5. butta la prima carta utile
-            multipleSpecial, carteNextPlayer = self.getMultipleSpecial(), self.CarteNextPlayers(self)
+            multipleSpecial, carteNextPlayer = self.getMultipliSpeciali(), self.CarteNextPlayer(self)
             if (multipleSpecial) != False and (carteNextPlayer < 4):
                 cartaDaGiocare_1, cartaDaGiocare_2 = mano[multipleSpecial[1]], mano[multipleSpecial[2]]
                 return [cartaDaGiocare_1, cartaDaGiocare_2]
             
-            special = self.getSpecial()    
+            special = self.getSpeciale()    
             elif (special !={}) and (carteNextPlayer < 4):
                 for key in special:
                     for index in special[key]:
@@ -199,7 +199,7 @@ class Giocatore_IA(Giocatore):
                         if controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
                             return [cartaDaGiocare]
                     
-            multiple = self.getMultiple()
+            multiple = self.getMultipli()
             elif multiple != False:
                 cartaDaGiocare_1, cartaDaGiocare_2 = mano[multiple[1]], mano[multiple[2]]
                 return [cartaDaGiocare_1, cartaDaGiocare_2]
