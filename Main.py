@@ -83,6 +83,8 @@ def visualizzaManoGiocatore(giocatore):
     return giocatore.visualizzaMano()
 
 def sceltaCartaDaGiocare(giocatore, mazzo):
+    ''' PROPOSTA DI MODIFICA PER CONCILIARE LE VARIE ESIGENZE DEI GIOCATORI! '''
+    '''
     index = int(input("Index carta da giocare: ")) - 1
     mano = giocatore.getMano()
     
@@ -109,6 +111,8 @@ def sceltaCartaDaGiocare(giocatore, mazzo):
     else:
         print("Non hai tutte queste carte! Poraccio...")
         return sceltaCartaDaGiocare(giocatore, mazzo.ultimaCarta())
+        '''
+    return giocatore.sceltaCartaDaGiocare(mazzo)
 
 def controlloCarte(ultimaCarta, cartaDaGiocare):
     if (ultimaCarta.getColore() == cartaDaGiocare.getColore()
