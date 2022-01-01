@@ -86,9 +86,8 @@ class Giocatore_IA(Giocatore):
     colori = ['nero', 'blu',  'giallo', 'rosso','verde']
 
 
-    def __init__(self, mano, nome, cleverness):
+    super().__init__(self, nome, mano, cleverness):
         self._mano = self.ordinaMano()
-        self._nome = nome
         self._cleverness = clever #True per un IA human-like (che quindi applicherà strategie di ottimizzazione)
                                   #False altrimenti
 
