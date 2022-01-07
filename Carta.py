@@ -7,17 +7,17 @@ class Carta:
     _valore = ""
 
     def __init__(self, colore, valore):
-        self.setColore(colore)
-        self.setValore(valore)
+        self.assegnaColore(colore)
+        self.assegnaValore(valore)
 
-    def setColore(self, colore):
+    def assegnaColore(self, colore):
         self._colore = colore
 
-    def getColore(self):
+    def visualizzaColore(self):
         return self._colore
 
-    def setValore(self, valore):
+    def assegnaValore(self, valore):
         self._valore = valore
 
-    def getValore(self):
+    def visualizzaValore(self):
         return self._valore
