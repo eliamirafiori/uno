@@ -379,18 +379,19 @@ class Giocatore_IA(Giocatore):
     def sceltaCartaDaGiocare(self, mazzo):
         mano = self.getMano()
         clever = self.Furbo()
+        ultimaCartaCimitero = (_cimitero[len(_cimitero) - 1]
 
         if not clever:
             for index in range(len(mano), 0, -1):
                 #controlla tra tutte le carte se ce ne sono di accettabili, e butta la prima buona
                 cartaDaGiocare = mano[index]
-                if controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
+                if controlloCarte(ultimaCartaCimitero, cartaDaGiocare):
                     mano.pop(index)
                     self.setMano(mano)
                     return [cartaDaGiocare]
             #se non trova una carta accettabile, continua a pescare fino a quando non ne trova una buona
             cartaDaGiocare =  self.pesca(1, mano)
-            while not controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
+            while not controlloCarte(ultimaCartaCimitero, cartaDaGiocare):
                 cartaDaGiocare =  self.pesca(1, mano)
             return [cartaDaGiocare]
         else:
@@ -416,7 +417,7 @@ class Giocatore_IA(Giocatore):
                 else:
                     pescaCarte(self, mazzo, 1)
                     # counter = 1
-                    return sceltaCartaDaGiocare(self, mazzo.ultimaCarta())
+                    return sceltaCartaDaGiocare(self, ultimaCartaCimitero)
                     ''' PROBLEMA!!!! Va avanti a ripetizione! fino a quando non trova una carta buttabile. Va bene?'''
             else:
                 if tupla != None and and type(tupla[0])!=list and tupla[2]!=1:
@@ -429,7 +430,7 @@ class Giocatore_IA(Giocatore):
                 else:
                     pescaCarte(self, mazzo, 1)
                     # counter = 1
-                    return sceltaCartaDaGiocare(self, mazzo.ultimaCarta())
+                    return sceltaCartaDaGiocare(self, ultimaCartaCimitero)
                     
                     
                 
