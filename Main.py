@@ -20,7 +20,7 @@ def generaMazzo():
     for _ in range(4):
         mazzo.append(Carta("nero", "cambio_colore"))
         mazzo.append(Carta("nero", "pesca_quattro"))
-
+        
     random.shuffle(mazzo)
 
     return mazzo
@@ -80,26 +80,17 @@ def assegnaCartaIniziale():
 def visualizzaTurno(turno):
     return turno % len(_giocatori)
 
-def controlloManoGiocatore(mano, ultimaCartaCimitero):
-    puoGiocare = False
-    for carta in mano:
-        if carta.visualiizaColore() == ultimaCartaCimitero.visualiizaColore():
-            puoGiocare = True
-            return
-        
-        if carta.visualiizaValore() == ultimaCartaCimitero.visualiizaValore():
-            puoGiocare = True
-            return
+def controlloCarta(carta, ultimaCartaCimitero, dovrebbeRispondere = False):
+    if dovrebbeRispondere:
+        if (carta.visualizzaValore() == "pesca_quattro"
+            or carta.visualizzaValore() == ultimaCartaCimitero.visualizzaValore()):
+            return True
 
-    return puoGiocare
-
-def controlloCarta(carta, ultimaCartaCimitero):
-    #TODO controllo carte speciali
-     if carta.visualiizaColore() == ultimaCartaCimitero.visualiizaColore():
-        return True
-        
-    if carta.visualiizaValore() == ultimaCartaCimitero.visualiizaValore():
-        return True
+    else:
+        if (carta.visualizzaColore() == ultimaCartaCimitero.visualizzaColore()
+            or carta.visualizzaValore() == ultimaCartaCimitero.visualizzaValore()
+            or carta.visualizzaColore() == "nero"):
+            return True
 
     return False
 
@@ -134,22 +125,33 @@ def giocaCarta(giocatore, ultimaCartaCimitero):
 def inizioGioco():
     turno = 0
     while True:
-        giocatore = _giocatori[visualizzaTurno(turno)]
-        ultimaCartaCimitero = (_cimitero[len(_cimitero) - 1]
+        turno += _carteSaltaTurno
+        _carteSaltaTurno = 0
 
-        #TODO controllo saltaTurno o pescaCarte != 0
+        giocatore = _giocatori[visualizzaTurno(turno)]
+        ultimaCartaCimitero = _cimitero[len(_cimitero) - 1]
 
         puoGiocare = False
         for carta in giocatore.visualizzaMano():
             if controlloCarta(carta, ultimaCartaCimitero):
                 puoGiocare = True
                 return
-        
+
         if puoGiocare:
+            puoRispondere = False
+            if pescaCarte != 0:
+                for carta in giocatore.visualizzaMano():
+                    if controlloCarta(carta, ultimaCartaCimitero, True):
+                        puoRispondere = True
+                        return
             #possibilità: giocare
             #TODO controllo più carte da giocare
+            pass
         else:
             #possibilità: pescare -> controlloMano -> giocare o passare
+            pass
+
+        #turno += 1
 
 if __name__ == "__main__":
     from Carta import Carta
@@ -161,6 +163,6 @@ if __name__ == "__main__":
     _giocatori = generaGiocatori()
 
     _carteDaPescare = 0
-    _saltaTurno = False
+    _carteSaltaTurno = 0
 
     assegnaCarteIniziali()
