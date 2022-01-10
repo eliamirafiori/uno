@@ -88,18 +88,18 @@ class Giocatore_IA(Giocatore):
 
     super().__init__(self, nome, mano, cleverness):
         self._mano = self.ordinaMano()
-        self._cleverness = clever #True per un IA human-like (che quindi applicherà strategie di ottimizzazione)
+        self._furbo = furbo #True per un IA human-like (che quindi applicherà strategie di ottimizzazione)
                                   #False altrimenti
 
-    def isClever(self):
-        return self._cleverness
+    def Furbo(self):
+        return self._furbo
 
     '''ora inserisco tutta una serie di metodi che consentono all'IA di procedere in maniera intelligente e adottare strategie di gioco'''
 
-   def CarteNextPlayers(self):
+   def CarteProssimoGiocatores(self):
         #controlla quante carte ha il giocatore successivo
-        next_turno = getTurno(turno, giocatori)+1
-        giocatore = _giocatori[next_turno]
+        prossimo_turno = getTurno(turno, giocatori)+1
+        giocatore = _giocatori[prossimo_turno]
         return len(giocatore.getMano())
 
     '''def getSpecial(self):
@@ -339,18 +339,18 @@ class Giocatore_IA(Giocatore):
         buttabili = self.Buttabili(mano)
         valori_carte = carte_normali if type_carte =='normali' else carte_speciali+carte_normali
         valore = ''
-        for key in valori_carte:
+        for chiave in valori_carte:
             if key in buttabili:
-                if buttabili[key][1] > n_carte:
-                    valore = key
-                elif buttabili[key][1] == n_carte:
+                if buttabili[chiave][1] > n_carte:
+                    valore = chiave
+                elif buttabili[chiave][1] == n_carte:
                     valore = [valore].append(key)
         if valore == '':
             return ()
         elif type(valore)==str:
             return (valore, buttabili[valore][0],buttabili[valore][1])
         else:
-            return ([value for value in valore], [buttabili[value][0] for value in valore], buttabili[valore[0]][1])
+            return ([val for val in valore], [buttabili[val][0] for val in valore], buttabili[valore[0]][1])
         
     def buttaColoreAbbondante(self):
         #prima ordina i colori in una lista dal più frequente al meno frequente
@@ -358,14 +358,14 @@ class Giocatore_IA(Giocatore):
         mano = self.getMano()
         riferimento = self.maxButtabili('normali')
 
-        color_counter = {}
-        for colore in colori[1:]: color_counter[colore] = 0
+        conta_colore = {}
+        for colore in colori[1:]: conta_colore[colore] = 0
         for carta in mano:
-            color_counter[carta.getColore()] += 1
+            conta_colore[carta.getColore()] += 1
         colori_ordinati = colori[1:]
         for i in range(1, len(colori_ordinati)):
             for j in range(i, len(colori_ordinati)):
-                if color_counter[colori_ordinati[j]) < color_counter[colori_ordinati[j-1]):
+                if conta_colore[colori_ordinati[j]) < conta_colore[colori_ordinati[j-1]):
                     colori_ordinati[j], colori_ordinati[j-1] = colori_ordinati[j-1], colori_ordinati[j]
         del(color_counter)
 
@@ -378,7 +378,7 @@ class Giocatore_IA(Giocatore):
                 
     def sceltaCartaDaGiocare(self, mazzo):
         mano = self.getMano()
-        clever = self.isClever()
+        clever = self.Furbo()
 
         if not clever:
             for index in range(len(mano), 0, -1):
@@ -400,9 +400,9 @@ class Giocatore_IA(Giocatore):
             # 2. altrimenti lo fa partendo dalle carte normali
             # 3. butta la prima carta utile appartenente al colore PIù rappresentato della mano
             # 4. butta la prima carta utile
-            carte_next_players = self.CarteNextPlayers()
+            carte_giocatore_successivo = self.CarteProssimoGiocatore()
             tupla = self.maxButtabili('speciali')
-            if carte_next_players < 4:
+            if carte_giocatore_successivo < 4:
                 if tupla != None and type(tupla[0])!=list:
                     carte = []
                     for i in range(tupla[1], tupla[1]+tupla[2]+1): carte.append(mano.pop[i])
