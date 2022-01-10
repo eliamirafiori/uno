@@ -23,22 +23,22 @@ class Giocatore:
         self.setMano(mano)
         '''_giocatori.append(self)'''
 
-    def setNome(self, nome):
+    def assegnaNome(self, nome):
         self._nome = nome.capitalize()
 
-    def getNome(self):
+    def visualizzaNome(self):
         return self._nome
 
     def setMano(self, mano):
         self._mano = mano
 
-    def getMano(self):
+    def assegnaMano(self):
         return self._mano
 
     def visualizzaMano(self):
         mano = []
         for carta in self._mano:
-            mano.append(carta.getValore() + " " + carta.getColore())
+            mano.append(carta.visualizzaValore() + " " + carta.visualizzaColore())
         return mano
 
     def sceltaCartaDaGiocare(self, mazzo):
@@ -52,7 +52,7 @@ class Giocatore_Umano(Giocatore):
 
     def sceltaCartaDaGiocare(self, mazzo):
         index = int(input("Index carta da giocare: ")) - 1
-        mano = self.getMano()
+        mano = self.visualizzaMano()
     
         if index < len(mano) and index >= 0:
             cartaDaGiocare = mano[index]
@@ -60,7 +60,7 @@ class Giocatore_Umano(Giocatore):
             if controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
                 mano.pop(index)
 
-                self.setMano(mano)
+                self.assegnaMano(mano)
             
                 #controllo che sia un cambio colore o +4, nel caso faccio funzione per cambiare colore
 
