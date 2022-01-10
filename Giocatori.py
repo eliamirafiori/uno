@@ -71,7 +71,7 @@ class Giocatore_Umano(Giocatore):
                 return sceltaCartaDaGiocare(self, mazzo.ultimaCarta())
         
         elif index == -1:
-            pescaCarte(self, mazzo, 1)
+            pescaCarte()
             return [mazzo.ultimaCarta()]
         
         else:
@@ -221,7 +221,7 @@ class Giocatore_IA(Giocatore):
                 lastUsefulIndex = None
                 for index in range(len(mano)):
                     cartaDaGiocare = mano[index]
-                    if controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
+                    if controlloCarte(ultimaCartaCimitero, cartaDaGiocare):
                         lastUsefulIndex = index                      
                         if cartaDaGiocare.visualizzaColore() == colore:
                             return [cartaDaGiocare]
@@ -391,9 +391,9 @@ class Giocatore_IA(Giocatore):
                     self.assegnaMano(mano)
                     return [cartaDaGiocare]
             #se non trova una carta accettabile, continua a pescare fino a quando non ne trova una buona
-            cartaDaGiocare =  self.pesca(1, mano)
+            cartaDaGiocare =  pesca()
             while not controlloCarte(ultimaCartaCimitero, cartaDaGiocare):
-                cartaDaGiocare =  self.pesca(1, mano)
+                cartaDaGiocare =  pesca()
             return [cartaDaGiocare]
         else:
             mano = self.ordinaMano()
@@ -416,9 +416,9 @@ class Giocatore_IA(Giocatore):
                     for i in range(tupla[1][emergency], tupla[1][emergency]+tupla[2]+1): carte.append(mano.pop[i])
                     return carte
                 else:
-                    pescaCarte(self, mazzo, 1)
+                    cartaDaGiocare = pescaCarte()
                     # counter = 1
-                    return sceltaCartaDaGiocare(self, ultimaCartaCimitero)
+                    return sceltaCartaDaGiocare(self, cartaDaGiocare)
                     ''' PROBLEMA!!!! Va avanti a ripetizione! fino a quando non trova una carta buttabile. Va bene?'''
             else:
                 if tupla != None and and type(tupla[0])!=list and tupla[2]!=1:
@@ -429,7 +429,7 @@ class Giocatore_IA(Giocatore):
                 elif tupla != None and tupla[2]==1:
                     return buttaColoreAbbondante(self)            
                 else:
-                    pescaCarte(self, mazzo, 1)
+                    pescaCarte()
                     # counter = 1
                     return sceltaCartaDaGiocare(self, ultimaCartaCimitero)
                     
