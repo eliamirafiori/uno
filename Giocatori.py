@@ -19,8 +19,8 @@ class Giocatore:
     _mano = []
 
     def __init__(self, nome, mano):
-        self.setNome(nome)
-        self.setMano(mano)
+        self.assegnaNome(nome)
+        self.assegnaMano(mano)
         '''_giocatori.append(self)'''
 
     def assegnaNome(self, nome):
@@ -29,7 +29,7 @@ class Giocatore:
     def visualizzaNome(self):
         return self._nome
 
-    def setMano(self, mano):
+    def assegnaMano(self, mano):
         self._mano = mano
 
     def assegnaMano(self):
@@ -98,36 +98,36 @@ class Giocatore_IA(Giocatore):
 
    def CarteProssimoGiocatores(self):
         #controlla quante carte ha il giocatore successivo
-        prossimo_turno = getTurno(turno, giocatori)+1
+        prossimo_turno = visualizzaTurno(turno, giocatori)+1
         giocatore = _giocatori[prossimo_turno]
-        return len(giocatore.getMano())
+        return len(giocatore.visualizzaMano())
 
-    '''def getSpecial(self):
+    '''def visualizzaSpecial(self):
         #cerca quante carte speciali (+4, +2, inverti, cambia colore) si abbiano e le memorizza in un dizionario, assieme alla posizione
         speciali = {}
         carteSpeciali = ["pesca_quattro", "pesca_due", "inverti", "stop", "cambio_colore"]
-        mano = self.getMano()
+        mano = self.visualizzaMano()
         for special in carteSpeciali:
             speciali[special]=[]
             for index in len(mano):
-                if mano[index].getValore()==special:
+                if mano[index].visualizzaValore()==special:
                     speciali[special].append(index)
         return speciali
 
-    def getMultipleSpecial(self):
+    def visualizzaMultipleSpecial(self):
         #cerca se è possibile giocare 2 carte, e se è possibile ritorna quali sono (colore, valore, index)
         #il criterio è questo: vale doppia se entrambe le carte hanno lo stesso valore e almeno una di esse ha lo stesso colore dell'ultima carta
-        color = mazzo.ultimaCarta().getColore()
-        mano = self.getMano()
+        color = mazzo.ultimaCarta().visualizzaColore()
+        mano = self.visualizzaMano()
         multipleSpecial = False
         #per prima cosa controllo tra le carte speciali
-        speciali = self.getSpecial()
+        speciali = self.visualizzaSpecial()
         while multiple==False:
             for speciale in speciali:
                 elements = speciale[speciali]
                 if len(elements)>1:
                     for i in range(len(elements)):
-                        if mano[elemets[i]].getColore()==color:
+                        if mano[elemets[i]].visualizzaColore()==color:
                             multiple = tuple(mano[elements[i]], mano[elements[(i+1)//len(elements)])
                             return multiple
                         else: continue
@@ -135,13 +135,14 @@ class Giocatore_IA(Giocatore):
         return multipleSpecial
         #adesso controllo tra quelle normali
 
-    def getMultiple(self):
-        color = mazzo.ultimaCarta().getColore()
-        mano = self.getMano()
+    def visualizzaMultiple(self):
+        color = mazzo.ultimaCarta().visualizzaColore()
+        mano = self.visualizzaMano()
         multiple = False
         while multiple==False:
             for index in range(len(mano)):
-                if mano[i].getColore()==color:
+                if mano[i].get
+                Colore()==color:
                     valore = mano[i].getValore()
                     for j in range(len(mano)):
                         if mano[j].getValore()==valore:
@@ -222,7 +223,7 @@ class Giocatore_IA(Giocatore):
                     cartaDaGiocare = mano[index]
                     if controlloCarte(mazzo.ultimaCarta(), cartaDaGiocare):
                         lastUsefulIndex = index                      
-                        if cartaDaGiocare.getColore() == colore:
+                        if cartaDaGiocare.visualizzaColore() == colore:
                             return [cartaDaGiocare]
                 if lastUsefulIndex != None:
                     cartaDaGiocare = mano[lastUsefulIndex]
@@ -240,7 +241,7 @@ class Giocatore_IA(Giocatore):
        #All'interno di ciascuna sottosezione è ripettato l'ordine['nero', 'blu',  'giallo', 'rosso','verde']
        #in questo modo poi per la scelta della carta da giocare sarà necessario un numero minore di operazioni e minor memoria
 
-       mano = self.getMano()
+       mano = self.visualizzaMano()
        
        ''' mi sono stufata, le uso un sacco, le salvo a inizio classe!
 
@@ -269,13 +270,13 @@ class Giocatore_IA(Giocatore):
 
 
        for i in range(1, len(mano)):
-           punteggio_valore = carte_speciali.index[mano[i].getValore()] if mano[i].getValore() in carte_speciali else carte_normali.index[mano[i].getValore()]+5
-           punteggio_colore = colori.index[mano[i].getColore()]
+           punteggio_valore = carte_speciali.index[mano[i].visualizzaValore()] if mano[i].visualizzaValore() in carte_speciali else carte_normali.index[mano[i].visualizzaValore()]+5
+           punteggio_colore = colori.index[mano[i].visualizzaColore()]
            carta = mano[i]
 
            j = i
-           punteggio_valore_J-1 = carte_speciali.index[mano[j-1].getValore()] if mano[j-1].getValore() in carte_speciali else carte_normali.index[mano[j-1].getValore()]+5
-           punteggio_colore_J-1 = colori.index[mano[j-1].getColore()]
+           punteggio_valore_J-1 = carte_speciali.index[mano[j-1].visualizzaValore()] if mano[j-1].visualizzaValore() in carte_speciali else carte_normali.index[mano[j-1].visualizzaValore()]+5
+           punteggio_colore_J-1 = colori.index[mano[j-1].visualizzaColore()]
            while j > 0 and punteggio_valore_J-1 >= punteggio_valore_J-1 and punteggio_colore_J-1 > punteggio_colore:
                mano[j] = mano[j-1]
                j = j-1
@@ -291,11 +292,11 @@ class Giocatore_IA(Giocatore):
 
                # ['nero', 'blu',  'giallo', 'rosso','verde']
                #    0      1        2         3       4
-    ###        valore_carta_J = carte_speciali.index[mano[j].getValore()] if mano[j].getValore() in carte_speciali else carte_normali.index[mano[j].getValore()]+5
-    ###        valore_colore_J = colori.index[mano[j].getColore()]
+    ###        valore_carta_J = carte_speciali.index[mano[j].visualizzaValore()] if mano[j].visualizzaValore() in carte_speciali else carte_normali.index[mano[j].visualizzaValore()]+5
+    ###        valore_colore_J = colori.index[mano[j].visualizzaColore()]
 
-    ###        valore_carta_J+1 = carte_speciali.index[mano[j+1].getValore()] if mano[j+1].getValore() in carte_speciali else carte_normali.index[mano[j+1].getValore()]+5
-    ###        valore_colore_J+1 = colori.index[mano[j+1].getColore()]
+    ###        valore_carta_J+1 = carte_speciali.index[mano[j+1].visualizzaValore()] if mano[j+1].visualizzaValore() in carte_speciali else carte_normali.index[mano[j+1].visualizzaValore()]+5
+    ###        valore_colore_J+1 = colori.index[mano[j+1].visualizzaColore()]
 
     ###        if (valore_carta_J >= valore_carta_J+1) and (valore_colore_J+1 >  valore_colore_J+1):
     ###            mano[j], mano[j+1] = mano[j+1], mano[j]
@@ -305,15 +306,15 @@ class Giocatore_IA(Giocatore):
     def Buttabili(self, mazzo):
         #ho pensato "ho troppi problemi! Mi creo una struttura di supporto per un metodo successivo!
         #buttabili ritorna un dizionario con come chiave i valori e come valore una lista [indice_prima_comparsa, n_carte_buttabili]
-        mano = self.getMano()
-        ultima_carta_colore , ultima_carta_valore = mazzo.ultimaCarta().getColore(), mazzo.ultimaCarta().getValore()
+        mano = self.visualizzaMano()
+        ultima_carta_colore , ultima_carta_valore = ultimaCartaCimitero.visualizzaColore(), ultimaCartaCimitero.visualizzaValore()
         buttabili = {}
-        for carta in mano: buttabili[carta.getValore()]=[] if carta.getValore() not in buttabili
+        for carta in mano: buttabili[carta.visualizzaValore()]=[] if carta.visualizzaValore() not in buttabili
         i_esimo = 0
         
         while i_esimo in range(len(mano)):
             carta = mano[i_esimo]
-            valore = carta.getValore()
+            valore = carta.visualizzaValore()
 
             if valore == ultima_carta_valore:
                 buttabili[valore].append(i_esimo)
@@ -326,7 +327,7 @@ class Giocatore_IA(Giocatore):
                 buttabili[valore].append(n_carte)
                 i_esimo  += n_carte
 
-            colore = carta.getColore()
+            colore = carta.visualizzaColore()
             elif colore == ultima_carta_colore:
                 if buttabili[valore]==[]:
                     buttabili[valore] += [i_esimo, 1]
@@ -355,13 +356,13 @@ class Giocatore_IA(Giocatore):
     def buttaColoreAbbondante(self):
         #prima ordina i colori in una lista dal più frequente al meno frequente
         # e poi, in presenza di più blocchi di carte buttabili, seleziona quello col maggior numero di carte di colore frequente
-        mano = self.getMano()
+        mano = self.visualizzaMano()
         riferimento = self.maxButtabili('normali')
 
         conta_colore = {}
         for colore in colori[1:]: conta_colore[colore] = 0
         for carta in mano:
-            conta_colore[carta.getColore()] += 1
+            conta_colore[carta.visualizzaColore()] += 1
         colori_ordinati = colori[1:]
         for i in range(1, len(colori_ordinati)):
             for j in range(i, len(colori_ordinati)):
@@ -372,22 +373,22 @@ class Giocatore_IA(Giocatore):
         for colore in colori_ordinati:
             lunghezza = riferimento[0]
             for i in range(len(lunghezza)):
-                if mano[riferimento[1][i]].getColore()==colore:
+                if mano[riferimento[1][i]].visualizzaColore()==colore:
                     return mano[riferimento[1][i]]
         return mano[riferimento[1][-1]]
                 
     def sceltaCartaDaGiocare(self, mazzo):
-        mano = self.getMano()
-        clever = self.Furbo()
+        mano = self.visualizzaMano()
+        furbo = self.Furbo()
         ultimaCartaCimitero = (_cimitero[len(_cimitero) - 1]
 
-        if not clever:
+        if not furbo:
             for index in range(len(mano), 0, -1):
                 #controlla tra tutte le carte se ce ne sono di accettabili, e butta la prima buona
                 cartaDaGiocare = mano[index]
                 if controlloCarte(ultimaCartaCimitero, cartaDaGiocare):
                     mano.pop(index)
-                    self.setMano(mano)
+                    self.assegnaMano(mano)
                     return [cartaDaGiocare]
             #se non trova una carta accettabile, continua a pescare fino a quando non ne trova una buona
             cartaDaGiocare =  self.pesca(1, mano)
