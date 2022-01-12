@@ -59,14 +59,31 @@ def pescaCarta():
     _mazzo.remove(_mazzo[len(_mazzo) - 1])
     return carta
 
+def organizzaCarteGiocatore(mano):
+    manoOrganizzata = []
+    colori = ["blu", "rosso", "verde", "giallo" , "nero"]
+
+    for colore in colori:
+        for carta in mano:
+            if carta.visualizzaColore() == colore:
+                manoOrganizzata.append(carta)
+
+    #TODO organizza per valore
+    return manoOrganizzata
+
+def aggiungiCarteGiocatore(giocatore):
+    mano = []
+    for _ in range(_carteDaPescare):
+        mano.append(pescaCarta())
+
+    giocatore.assegnaMano(organizzaCarteGiocatore(mano))
+
 def assegnaCarteIniziali():
+    _carteDaPescare = 7
     for giocatore in _giocatori:
-        mano = []
-        for _ in range(7):
-            mano.append(pescaCarta())
+        aggiungiCarteGiocatore(giocatore)
 
-        giocatore.assegnaMano(mano)
-
+    _carteDaPescare = 0
     assegnaCartaIniziale()
 
 def assegnaCartaIniziale():
@@ -93,6 +110,17 @@ def controlloCarta(carta, ultimaCartaCimitero, dovrebbeRispondere = False):
             return True
 
     return False
+
+def visualizzaManoGiocatore(giocatore, visualizzaPerRispondere = False, ultimaCartaCimitero = None):
+    if visualizzaPerRispondere:
+        for carta in giocatore.visualizzaMano():
+            if (carta.visualizzaValore() == "pesca_quattro"
+                or carta.visualizzaValore() == ultimaCartaCimitero.visualizzaValore()):
+                print('|' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
+
+    else:
+        for carta in giocatore.visualizzaMano():
+            print('|' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
 
 def giocaCarta(giocatore, ultimaCartaCimitero):
     indiceCarta = input("Scegli una carta da giocare: ")
@@ -137,21 +165,55 @@ def inizioGioco():
                 puoGiocare = True
                 return
 
+        #Visualizza la mano del giocatore
+        visualizzaManoGiocatore(giocatore)
+
         if puoGiocare:
-            puoRispondere = False
-            if pescaCarte != 0:
+            #Se ci sono carte da pescare dai turni precedenti
+            if _carteDaPescare > 0:
+
+                #Controllo della mano del giocatore per vedere se può rispondere
+                puoRispondere = False
                 for carta in giocatore.visualizzaMano():
                     if controlloCarta(carta, ultimaCartaCimitero, True):
                         puoRispondere = True
                         return
-            #possibilità: giocare
+
+                #Se il giocatore può rispondere con le carte che ha in mano
+                if puoRispondere:
+
+                    #Proposta per rispondere o pescare
+                    scelta = str(input("Hai la possibilità di rispondere, vuoi farlo? (S/n)\n")).strip().lower()
+
+                    #Continua a comparire il messaggio d'errore e la proposta fintantochè la scelta non è valida
+                    while scelta not in ['s', 'n']:
+                        print("Inserisci una risposta valida")
+                        scelta = str(input("Hai la possibilità di rispondere, vuoi farlo? (S/n)\n")).strip().lower()
+
+                    #Se la scelta è quella di rispondere
+                    if scelta == 's':
+                        #TODO risponde solo con le carte con cui può farlo
+                        #Visualizza la mano con cui può rispondere il giocatore
+                        visualizzaManoGiocatore(giocatore, True, ultimaCartaCimitero)
+
+                    #Se la scelta è quella di pescare
+                    else:
+                        aggiungiCarteGiocatore(giocatore)
+                        #TODO dopo aver pescato gioca
+
+                #Se il giocatore non può rispondere allo pesca _carteDaPescare carte
+                else:
+                    aggiungiCarteGiocatore(giocatore)
+
+            #TODO possibilità: giocare
             #TODO controllo più carte da giocare
             pass
         else:
-            #possibilità: pescare -> controlloMano -> giocare o passare
+            #TODO possibilità: pescare -> controlloMano -> giocare o passare
             pass
 
-        #turno += 1
+        turno += 1
+
 
 if __name__ == "__main__":
     from Carta import Carta
