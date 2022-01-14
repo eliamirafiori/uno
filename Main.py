@@ -54,6 +54,8 @@ def generaGiocatori():
     return giocatori
 
 def pescaCarta():
+    global _mazzo
+
     carta = _mazzo[len(_mazzo) - 1]
     _mazzo.remove(_mazzo[len(_mazzo) - 1])
     return carta
@@ -61,7 +63,7 @@ def pescaCarta():
 def organizzaCarteGiocatore(mano):
     manoOrganizzata = []
 
-    for colore in _colori:
+    for colore in ["blu", "rosso", "verde", "giallo", "nero"]:
         for carta in mano:
             if carta.visualizzaColore() == colore:
                 manoOrganizzata.append(carta)
@@ -70,13 +72,21 @@ def organizzaCarteGiocatore(mano):
     return manoOrganizzata
 
 def aggiungiCarteGiocatore(giocatore):
+    global _carteDaPescare
+
     mano = []
+
+    for carta in giocatore.visualizzaMano():
+        mano.append(carta)
+
     for _ in range(_carteDaPescare):
         mano.append(pescaCarta())
 
     giocatore.assegnaMano(organizzaCarteGiocatore(mano))
 
 def assegnaCarteIniziali():
+    global _carteDaPescare, _giocatori
+
     _carteDaPescare = 7
     for giocatore in _giocatori:
         aggiungiCarteGiocatore(giocatore)
@@ -85,14 +95,18 @@ def assegnaCarteIniziali():
     assegnaCartaIniziale()
 
 def assegnaCartaIniziale():
+    global _cimitero
+
     carteSpeciali = ["pesca_due", "pesca_quattro", "inverti", "stop", "cambio_colore"]
     
     while len(_cimitero) == 0 or _cimitero[len(_cimitero) - 1].visualizzaValore() in carteSpeciali:
         _cimitero.append(pescaCarta())
 
-    print(_cimitero[len(_cimitero) - 1].visualizzaValore())
+    inizioGioco()
 
 def visualizzaTurno(turno):
+    global _giocatori
+
     return turno % len(_giocatori)
 
 def controlloCarta(carta, ultimaCartaCimitero, dovrebbeRispondere = False):
@@ -125,16 +139,22 @@ def puoRispondere(giocatore, ultimaCartaCimitero):
 
 def visualizzaManoGiocatore(giocatore, visualizzaPerRispondere = False, ultimaCartaCimitero = None):
     if visualizzaPerRispondere:
+        indiceCarta = 0
         for carta in giocatore.visualizzaMano():
             if (carta.visualizzaValore() == "pesca_quattro"
                 or carta.visualizzaValore() == ultimaCartaCimitero.visualizzaValore()):
-                print('|' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
+                print(str(indiceCarta) + ' |' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
+            indiceCarta +=1
 
     else:
+        indiceCarta = 0
         for carta in giocatore.visualizzaMano():
-            print('|' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
+            print(str(indiceCarta) + ' |' + carta.visualizzaColore() + ' ' + carta.visualizzaValore() + '|')
+            indiceCarta +=1
 
 def invertiTurno():
+    global _giocatori, _turno
+
     _giocatori = _giocatori[::-1]
     _turno = (len(_giocatori) - _turno) + 1 #TODO capire se ci va il "+ 1" o no
             
@@ -143,10 +163,13 @@ def invertiTurno():
         print(giocatore.visualizzaNome())
 
 def scegliColore():
+    global _colori
+
     print("Scegli un colore:")
-    index = 1
+    indiceCarta = 0
     for colore in _colori:
-        print(index + " - " + colore.capitalize())
+        print(str(indiceCarta) + " - " + colore.capitalize())
+        indiceCarta += 1
 
     colore = input("Indice colore: ")
 
@@ -160,7 +183,10 @@ def scegliColore():
     return colore
 
 def giocaCarta(giocatore, ultimaCartaCimitero):
+    global _cimitero, _carteDaPescare, _carteSaltaTurno, _colori
+
     indiceCarta = input("Scegli una carta da giocare: ")
+    mano = giocatore.visualizzaMano()
 
     try:
         indiceCarta = int(indiceCarta)
@@ -169,12 +195,11 @@ def giocaCarta(giocatore, ultimaCartaCimitero):
         giocaCarte(mano, ultimaCartaCimitero)
         return "Inserisci un intero!"
 
-    if numeroGiocatori < 0 or numeroGiocatori > (len(mano) - 1):
+    if indiceCarta < 0 or indiceCarta > (len(mano) - 1):
         print("Scegli una carta esistente!")
         giocaCarte(mano, ultimaCartaCimitero)
         return "Scegli una carta esistente!"
 
-    mano = giocatore.visualizzaMano()
     carta = mano[indiceCarta]
 
     if controlloCarta(carta, ultimaCartaCimitero):
@@ -187,6 +212,7 @@ def giocaCarta(giocatore, ultimaCartaCimitero):
 
         elif carta.visualizzaValore() == "pesca_quattro":
             _carteDaPescare += 4
+            _cimitero.append(Carta(_colori[scegliColore()], "dummy")) #Carta per "tenere" il colore
 
         elif carta.visualizzaValore() == "stop":
             _carteSaltaTurno += 1
@@ -200,10 +226,12 @@ def giocaCarta(giocatore, ultimaCartaCimitero):
 
     else:
         print("Scegli una carta valida!")
-        giocaCarte(mano, ultimaCartaCimitero)
+        giocaCarta(giocatore, ultimaCartaCimitero)
         return "Scegli una carta valida!"
 
 def inizioGioco():
+    global _turno,  _carteDaPescare, _carteSaltaTurno
+
     while True:
         _turno += _carteSaltaTurno
         _carteSaltaTurno = 0
@@ -211,8 +239,11 @@ def inizioGioco():
         giocatore = _giocatori[visualizzaTurno(_turno)]
         ultimaCartaCimitero = _cimitero[len(_cimitero) - 1]
 
+        print("\n\nE' il turno di " + giocatore.visualizzaNome())
+        print("Ultima carta in tavola: " + ultimaCartaCimitero.visualizzaColore() + " " + ultimaCartaCimitero.visualizzaValore())
+
         #Visualizza la mano del giocatore
-        visualizzaManoGiocatore(giocatore)
+        #visualizzaManoGiocatore(giocatore)
 
         #Controllo della mano del giocatore per vedere se può giocare
         if puoGiocare(giocatore, ultimaCartaCimitero): #Se il giocatore può giocare con le carte che ha in mano
@@ -226,15 +257,18 @@ def inizioGioco():
                     #Proposta per rispondere o pescare
                     #Se vuole rispondere o se non specifica la risposta è True
                     #Se non vuole rispondere è False
+                    print(giocatore.visualizzaNome() + " dovresti pescare " + str(_carteDaPescare))
                     vuoleRispondere = True if str(input("Hai la possibilità di rispondere, vuoi farlo? (S/n)\n")).strip().lower() != 'n' else False
 
                     #Controllo la scelta del giocatore se rispondere o pescare
                     if vuoleRispondere: #Se la scelta è quella di rispondere
+                        print(giocatore.visualizzaNome() + " hai scelto di rispondere")
                         visualizzaManoGiocatore(giocatore, True, ultimaCartaCimitero) #Visualizza la mano con cui può rispondere il giocatore
                         giocaCarta(giocatore, ultimaCartaCimitero)
                         #TODO risponde solo con le carte con cui può farlo
 
                     else: #Se la scelta è quella di pescare
+                        print(giocatore.visualizzaNome() + " hai scelto di pescare e poi rispondere")
                         aggiungiCarteGiocatore(giocatore) #Il giocatore pesca _carteDaPescare carte
                         _carteDaPescare = 0 #Reset di _carteDaPescare
 
@@ -243,6 +277,7 @@ def inizioGioco():
                         #TODO controllo più carte da giocare
 
                 else: #Se il giocatore NON può rispondere allora pesca _carteDaPescare carte
+                    print(giocatore.visualizzaNome() + " hai pescato " + str(_carteDaPescare) + ", ora puoi giocare")
                     aggiungiCarteGiocatore(giocatore) #Il giocatore pesca _carteDaPescare carte
                     _carteDaPescare = 0 #Reset di _carteDaPescare
 
@@ -254,12 +289,11 @@ def inizioGioco():
                 visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                 giocaCarta(giocatore, ultimaCartaCimitero)
                 #TODO controllo più carte da giocare
-                pass
 
         else: #Se il giocatore NON può giocare con le carte che ha in mano
-            #TODO possibilità: pescare (done) -> controlloMano (done) -> giocare o passare
             if _carteDaPescare == 0: _carteDaPescare = 1
 
+            print(giocatore.visualizzaNome() + " non hai carte con cui giocare, ora peschi " + str(_carteDaPescare) + " carte")
             aggiungiCarteGiocatore(giocatore) #Il giocatore pesca _carteDaPescare carte
             _carteDaPescare = 0 #Reset di _carteDaPescare
 
@@ -268,6 +302,12 @@ def inizioGioco():
                 visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                 giocaCarta(giocatore, ultimaCartaCimitero)
                 #TODO controllo più carte da giocare
+
+        if len(giocatore.visualizzaMano()) == 0:
+            print(giocatore.visualizzaNome() + " HA VINTO!!")
+            return
+        elif len(giocatore.visualizzaMano()) == 1:
+            print(giocatore.visualizzaNome() + " urla UNO!!")
 
         _turno += 1
 
@@ -279,7 +319,7 @@ if __name__ == "__main__":
 
     #TODO commentare tutto
     
-    _colori = ["blu", "rosso", "verde", "giallo" , "nero"]
+    _colori = ["blu", "rosso", "verde", "giallo"]
     _mazzo = generaMazzo()
     _cimitero = [] #iughioh eazter eggg
     _giocatori = generaGiocatori()
