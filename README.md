@@ -1,3 +1,5 @@
+![Gruppo 7](GraphicAttempt/python_uno.png)
+
 # UNO
 
 Questo è repository del **Gruppo 7** al corso di laurea triennale di Ingegneria biomedica Unipd
