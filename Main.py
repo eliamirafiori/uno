@@ -24,6 +24,16 @@ def generaMazzo():
 
     return mazzo
 
+def invertiCimiteroMazzo():
+    mazzo = []
+    for carta in _cimitero:
+        if carta.visualizzaValore() != "dummy":
+            mazzo.append(carta)
+
+    random.shuffle(mazzo)
+
+    return mazzo
+
 def generaGiocatori():
     giocatori = []
     numeroGiocatori = input("Inserisci il numero di giocatori: ")
@@ -56,8 +66,12 @@ def generaGiocatori():
 def pescaCarta():
     global _mazzo
 
+    if (len(_mazzo) < 1):
+        _mazzo = invertiCimiteroMazzo()
+
     carta = _mazzo[len(_mazzo) - 1]
     _mazzo.remove(_mazzo[len(_mazzo) - 1])
+
     return carta
 
 def organizzaCarteGiocatore(mano):
@@ -68,7 +82,6 @@ def organizzaCarteGiocatore(mano):
             if carta.visualizzaColore() == colore:
                 manoOrganizzata.append(carta)
 
-    #TODO organizza per valore
     return manoOrganizzata
 
 def aggiungiCarteGiocatore(giocatore):
@@ -156,7 +169,7 @@ def invertiTurno():
     global _giocatori, _turno
 
     _giocatori = _giocatori[::-1]
-    _turno = (len(_giocatori) - _turno) + 1 #TODO capire se ci va il "+ 1" o no
+    _turno = len(_giocatori) - (_turno + 1)
             
     print("L'ordine dei giocatori ora sarà: ")
     for giocatore in _giocatori:
@@ -222,7 +235,6 @@ def giocaCarta(giocatore, ultimaCartaCimitero):
 
         elif carta.visualizzaValore() == "cambio_colore":
             _cimitero.append(Carta(_colori[scegliColore()], "dummy")) #Carta per "tenere" il colore
-            #TODO quando riutilizzo il _cimitero e lo rimetto nel mazzo devo togliere le carte "dummy"
 
     else:
         print("Scegli una carta valida!")
@@ -241,6 +253,7 @@ def inizioGioco():
 
         print("\n\nE' il turno di " + giocatore.visualizzaNome())
         print("Ultima carta in tavola: " + ultimaCartaCimitero.visualizzaColore() + " " + ultimaCartaCimitero.visualizzaValore())
+        input('Premi INVIO quando tutti i giocatori non guardano lo schermo')
 
         #Visualizza la mano del giocatore
         #visualizzaManoGiocatore(giocatore)
@@ -265,7 +278,6 @@ def inizioGioco():
                         print(giocatore.visualizzaNome() + " hai scelto di rispondere")
                         visualizzaManoGiocatore(giocatore, True, ultimaCartaCimitero) #Visualizza la mano con cui può rispondere il giocatore
                         giocaCarta(giocatore, ultimaCartaCimitero)
-                        #TODO risponde solo con le carte con cui può farlo
 
                     else: #Se la scelta è quella di pescare
                         print(giocatore.visualizzaNome() + " hai scelto di pescare e poi rispondere")
@@ -274,7 +286,6 @@ def inizioGioco():
 
                         visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                         giocaCarta(giocatore, ultimaCartaCimitero)
-                        #TODO controllo più carte da giocare
 
                 else: #Se il giocatore NON può rispondere allora pesca _carteDaPescare carte
                     print(giocatore.visualizzaNome() + " hai pescato " + str(_carteDaPescare) + ", ora puoi giocare")
@@ -283,12 +294,10 @@ def inizioGioco():
 
                     visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                     giocaCarta(giocatore, ultimaCartaCimitero)
-                    #TODO controllo più carte da giocare
 
             else: #Se NON ci sono carte da pescare dai turni precedenti
                 visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                 giocaCarta(giocatore, ultimaCartaCimitero)
-                #TODO controllo più carte da giocare
 
         else: #Se il giocatore NON può giocare con le carte che ha in mano
             if _carteDaPescare == 0: _carteDaPescare = 1
@@ -301,13 +310,12 @@ def inizioGioco():
             if puoGiocare(giocatore, ultimaCartaCimitero): #Se il giocatore può giocare con le carte che ha in mano
                 visualizzaManoGiocatore(giocatore) #Visualizza la mano del giocatore
                 giocaCarta(giocatore, ultimaCartaCimitero)
-                #TODO controllo più carte da giocare
 
         if len(giocatore.visualizzaMano()) == 0:
             print(giocatore.visualizzaNome() + " HA VINTO!!")
             return
         elif len(giocatore.visualizzaMano()) == 1:
-            print(giocatore.visualizzaNome() + " urla UNO!!")
+            input(giocatore.visualizzaNome() + " urla UNO e premi INVIO!!")
 
         _turno += 1
 
@@ -316,12 +324,10 @@ if __name__ == "__main__":
     from Carta import Carta
     from Giocatore import Giocatore
     import random
-
-    #TODO commentare tutto
     
     _colori = ["blu", "rosso", "verde", "giallo"]
     _mazzo = generaMazzo()
-    _cimitero = [] #iughioh eazter eggg
+    _cimitero = []
     _giocatori = generaGiocatori()
 
     _turno = 0
